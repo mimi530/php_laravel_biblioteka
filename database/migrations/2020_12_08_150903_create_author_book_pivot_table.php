@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateUsersTable extends Migration
+class CreateAuthorBookPivotTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,14 +13,10 @@ class CreateUsersTable extends Migration
      */
     public function up()
     {
-        Schema::create('users', function (Blueprint $table) {
+        Schema::create('author_book', function (Blueprint $table) {
             $table->id();
-            $table->string('role')->default('user');
-            $table->string('name');
-            $table->string('email')->unique();
-            $table->timestamp('email_verified_at')->nullable();
-            $table->string('password');
-            $table->rememberToken();
+            $table->foreignId('author_id')->constrained()->onDelete('cascade');
+            $table->foreignId('book_id')->constrained()->onDelete('cascade');
             $table->timestamps();
         });
     }
@@ -32,6 +28,6 @@ class CreateUsersTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('users');
+        Schema::dropIfExists('author_book');
     }
 }

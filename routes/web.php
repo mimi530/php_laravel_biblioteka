@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\BookController;
 
 /*
 |--------------------------------------------------------------------------
@@ -16,7 +17,21 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+Route::group(['middleware'=>['auth']], function() {
+    Route::get('books/search', [BookController::class, 'search'])->name('books.search');
+    Route::resource('books', BookController::class)->only([
+        'index', 'create', 'store'
+    ])->names([
+        'index' => 'books.index',
+        'create' => 'books.create',
+        'store' => 'books.store'
+    ]);
+    // Route::resource('books', BookController::class)->only([
+    //     'index', 'create', 'store'
+    // ])->names([
+    //     'index' => 'books.index',
+    //     'create' => 'books.create',
+    //     'store' => 'books.store'
+    // ]);
+});
 
-Auth::routes();
-
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
