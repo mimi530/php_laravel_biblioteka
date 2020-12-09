@@ -21,7 +21,7 @@
 </head>
 <body>
     <div id="app">
-        <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
+        <nav class="navbar navbar-expand-md navbar-dark bg-dark shadow-sm">
             <div class="container">
                 <a class="navbar-brand" href="{{ url('/') }}">
                     {{ config('app.name', 'Laravel') }}
@@ -64,7 +64,11 @@
                                     @can('create', App\Models\Book::class)
                                         <a class="dropdown-item" href="{{ route('books.create') }}">Dodaj książkę</a>
                                     @endcan
-                                    <a class="dropdown-item" href="{{ route('logout') }}">Twoje wypożyczenia</a>
+                                    @can('viewAll', App\Models\Lending::class)
+                                        <a class="dropdown-item" href="{{ route('lendings.index') }}">Wypożyczenia</a>
+                                    @else
+                                        <a class="dropdown-item" href="{{ route('lendings.index') }}">Twoje wypożyczenia</a>
+                                    @endcan
                                     <a class="dropdown-item" href="{{ route('logout') }}"
                                        onclick="event.preventDefault();
                                                      document.getElementById('logout-form').submit();">

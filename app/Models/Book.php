@@ -19,4 +19,10 @@ class Book extends Model
     {
         return $this->belongsToMany(Author::class);
     }
+    public function aviable()
+    {
+        $lendings = Lending::where('book_id', $this->id)->count();
+        if($lendings) return false; 
+        else return true;
+    }
 }

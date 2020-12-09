@@ -8,4 +8,18 @@ use Illuminate\Database\Eloquent\Model;
 class Lending extends Model
 {
     use HasFactory;
+    protected $fillable = [
+        'user_id',
+        'book_id',
+        'lend_start',
+        'lend_end'
+    ];
+    public function book()
+    {
+        return $this->belongsTo(Book::class);
+    }
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

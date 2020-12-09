@@ -17,8 +17,8 @@
             <table class="table mt-5">
                 <thead class="thead-dark text-center align-middle">
                     <tr>
-                        <th scope="col">Autor</th>
                         <th scope="col">Tytuł</th>
+                        <th scope="col">Autor</th>
                         <th scope="col">Pokój</th>
                         <th scope="col">Szafa</th>
                         <th scope="col">Półka</th>
@@ -29,19 +29,23 @@
                 <tbody>
                     @foreach($books as $book)
                     <tr class="text-center align-middle">
-                        <th scope="row" class="align-middle">
+                        <th class="align-middle">{{ $book->title }}</th>
+                        <td scope="row" class="align-middle">
                             @foreach($book->authors as $author)
                                 {{ $loop->first ? '' : ', ' }}
                                 {{ $author->name }}
                             @endforeach
-                        </th>
-                        <td class="align-middle">{{ $book->title }}</td>
+                        </td>
                         <td class="align-middle">{{ $book->room }}</td>
                         <td class="align-middle">{{ $book->bookshelf }}</td>
                         <td class="align-middle">{{ $book->shelf }}</td>
                         <td class="align-middle">{{ $book->position }}</td>
                         <td class="align-middle">
-                            <button class="btn btn-primary m-0 p-1">Wypożycz!</button>
+                        @if($book->aviable())
+                            <a href="{{ route('lendings.create', ['id' => $book->id]) }}" class="btn btn-primary">Wypożycz</a>
+                        @else
+                            <h5>Niedostępna</h5>
+                        @endcan
                         </td>
                     </tr>
                     @endforeach

@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\BookController;
+use App\Http\Controllers\LendingController;
 
 /*
 |--------------------------------------------------------------------------
@@ -26,12 +27,14 @@ Route::group(['middleware'=>['auth']], function() {
         'create' => 'books.create',
         'store' => 'books.store'
     ]);
-    // Route::resource('books', BookController::class)->only([
-    //     'index', 'create', 'store'
-    // ])->names([
-    //     'index' => 'books.index',
-    //     'create' => 'books.create',
-    //     'store' => 'books.store'
-    // ]);
+    Route::resource('lendings', LendingController::class)->only([
+        'index', 'show', 'store', 'destroy', 'create'
+    ])->names([
+        'index' => 'lendings.index',
+        'create' => 'lendings.create',
+        'show' => 'lendings.show',
+        'store' => 'lendings.store',
+        'destroy' => 'lendings.destroy',
+    ]);
 });
 
