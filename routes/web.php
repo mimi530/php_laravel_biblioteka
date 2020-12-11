@@ -27,8 +27,8 @@ Route::group(['middleware'=>['auth']], function() {
         'create' => 'books.create',
         'store' => 'books.store'
     ]);
-    Route::resource('lendings', LendingController::class)->only([
-        'index', 'show', 'store', 'destroy', 'create'
+    Route::resource('lendings', LendingController::class)->except([
+        'update', 'edit'
     ])->names([
         'index' => 'lendings.index',
         'create' => 'lendings.create',

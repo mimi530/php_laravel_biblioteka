@@ -22,23 +22,25 @@ class LendingController extends Controller
             'lend_start' => 'required|date|after_or_equal:'.$todayDate,
             'lend_end' => 'required|date|after_or_equal:lend_start',
         ]);
-        $lending = new Lending();
-        $lending['user_id'] = auth()->user()->id;
-        $lending['book_id'] = $book->id;
-        $lending['lend_start'] = $data['lend_start'];
-        $lending['lend_end'] = $data['lend_end'];
-        $lending->save();
-        return redirect('/books');
+        //sprawdzenie czy juz wypozyczona
+        if($book->available()) {
+            $lending = new Lending();
+            $lending['user_id'] = auth()->user()->id;
+            $lending['book_id'] = $book->id;
+            $lending['lend_start'] = $data['lend_start'];
+            $lending['lend_end'] = $data['lend_end'];
+            $lending->save();
+        }
+        return redirect('/lendings');
     }
     public function index()
     {
         if(auth()->user()->role==='librarian') {
             $lendings = Lending::orderBy('lend_end')->get();
-            return view('lendings.index', compact('lendings'));
         } else {
             $lendings = auth()->user()->lendings()->orderBy('lend_end')->get();
-            return view('lendings.index', compact('lendings'));
         }
+        return view('lendings.index', compact('lendings'));
     }
     public function destroy(Lending $lending)
     {

@@ -3,11 +3,16 @@
 @section('content')
 <div class="container">
     <div class="row justify-content-center">
-        <div class="col-md-8">
+        <div class="col-md-12">
             <form method="get" action="{{ route('books.search') }}">
-                <div class="row">
-                    <div class="col-10 pr-1">
-                        <input type="text" name="query" placeholder="Wyszukaj książkę" class="form-control">
+                <div class="row justify-content-center">
+                    <div class="col-6 pr-1">
+                        <input type="text" name="query" placeholder="Wyszukaj książkę" class="form-control @error('author') is-invalid @enderror">
+                        @error('query')
+                            <span class="invalid-feedback" role="alert">
+                                <strong>{{ $message }}</strong>
+                            </span>
+                        @enderror
                     </div>
                     <div class="col-2 pl-0">
                         <input type="submit" value="Szukaj" class="form-control btn btn-primary">
@@ -32,7 +37,7 @@
                         <th class="align-middle">{{ $book->title }}</th>
                         <td scope="row" class="align-middle">
                             @foreach($book->authors as $author)
-                                {{ $loop->first ? '' : ', ' }}
+                                {{ $loop->first ? '' : '|' }}
                                 {{ $author->name }}
                             @endforeach
                         </td>
@@ -41,16 +46,25 @@
                         <td class="align-middle">{{ $book->shelf }}</td>
                         <td class="align-middle">{{ $book->position }}</td>
                         <td class="align-middle">
-                        @if($book->aviable())
-                            <a href="{{ route('lendings.create', ['id' => $book->id]) }}" class="btn btn-primary">Wypożycz</a>
+                        @if($book->available())
+                            @if(Auth::user()->role==='librarian')
+                                <h5 class="text-success">Dostępna</h5>
+                            @else
+                                <a href="{{ route('lendings.create', ['id' => $book->id]) }}" class="btn btn-primary">Wypożycz</a>
+                            @endif
                         @else
-                            <h5>Niedostępna</h5>
-                        @endcan
+                            <h5 class="text-danger">Niedostępna</h5>
+                        @endif
                         </td>
                     </tr>
                     @endforeach
                 </tbody>
             </table>
+            <div class="justify-content-center d-flex">
+                @if(!isset($_GET['query']))
+                {{ $books->links("pagination::bootstrap-4") }}
+                @endif
+            </div>
         </div>
     </div>
 </div>

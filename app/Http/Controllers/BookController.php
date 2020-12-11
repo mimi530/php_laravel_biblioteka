@@ -23,7 +23,7 @@ class BookController extends Controller
     {
         $this->authorize('create', Book::class);
         $data = request()->validate([
-            'title' => 'required',
+            'title' => 'required|string',
             'author' => 'required|string',
             'room' => 'required|integer',
             'bookshelf' => 'required|integer',
@@ -37,14 +37,45 @@ class BookController extends Controller
         $book->shelf = $data['shelf'];
         $book->position = $data['position'];
         $book->save();
-        $author = new Author();
-        $author->name = $data['author'];
-        $author->save();
-        $book->authors()->attach($author);
-        return redirect('/books');
+        //dodawanie nowego autora lub autorów
+        $authors = explode(',', $data['author']);
+        foreach($authors as $author) {
+            $author = trim($author);
+            $existing = Author::where('name', $author);
+            //sprawdzanie czy juz taki istnieje
+            if($existing->count()) {
+                $book->authors()->attach($existing->first());
+            } else {
+                $newauthor = new Author();
+                $newauthor->name = $author;
+                $newauthor->save();
+                $book->authors()->attach($newauthor);
+            }
+        }
+        // return redirect('/books');
+        return view('books.create');
     }
     public function search()
     {
-        
+        $data = request()->validate([
+            'query' => 'required|string'
+        ]);
+        $query = $data['query'];
+        //szukanie wg wzoru
+        if(preg_match('/^[0-9]*-[0-9]*$/', $query)) {
+            $query = explode('-', $query);
+            $books = Book::where('room', $query[0])->where('bookshelf', $query[1])->get();
+        } elseif(preg_match('/^[0-9]*-[0-9]*-[0-9]*$/', $query)) {
+            $query = explode('-', $query);
+            $books = Book::where('room', $query[0])->where('bookshelf', $query[1])->where('shelf', $query[2])->get();
+        } elseif(preg_match('/^[0-9]*-[0-9]*-[0-9]*-[0-9]*$/', $query)) {
+            $query = explode('-', $query);
+            $books = Book::where('room', $query[0])->where('bookshelf', $query[1])->where('shelf', $query[2])->where('position', $query[3])->get();
+        } else {
+            //szukanie po autorze
+            $author = Author::where('name', 'like', "%$query%")->first();
+            $books = $author ? $author->books()->get() : [];
+        }
+        return view('books.index', compact('books'));
     }
 }
