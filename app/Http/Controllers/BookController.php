@@ -52,8 +52,7 @@ class BookController extends Controller
                 $book->authors()->attach($newauthor);
             }
         }
-        // return redirect('/books');
-        return view('books.create');
+        return redirect('/books');
     }
     public function search()
     {
